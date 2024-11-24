@@ -16,10 +16,17 @@ const EOS = '\x1b[0m';
 const commitMsgContent = fs.readFileSync('.git/COMMIT_EDITMSG', 'utf-8');
 const msg = getFirstLine(commitMsgContent).replace(/\s{2,}/g, ' ');
 
-// TODO: Change and update regex below according to your preferences.
 const pattern = /^\[((BF)|(HF)|F|R|(DX)|(CUSTOM))\]: .+$/;
 
-// TODO: Change and update example below according to your preferences.
+const prefixesInfo = `
+-\t[HF] - hot fix
+-\t[F] - Feature
+-\t[BF] - bug fix
+-\t[DX] - improved Developer eXperience
+-\t[R] - refactor
+-\t[CUSTOM] - something unknown but so much wanted
+`.trim();
+
 const exampleMsg = [
     '[F]: added flowcharts',
     '[F]: added customization for flowcharts',
@@ -54,7 +61,6 @@ const failMsgs = [
     `\n${RED}************* Invalid Git Commit Message *************${EOS}`,
     `\n${RED}************* Houston, we have a problem. *************${EOS}`,
     `\n${RED}************* You can't handle the truth! *************${EOS}`,
-    `\n${RED}************* “I am your father.” *************${EOS}`,
     `\n${RED}************* “Hasta la vista, baby.” *************${EOS}`,
     `\n${RED}************* Something bad happened *************${EOS}`,
     `\n${RED}************* Catastrophic failure *************${EOS}`,
@@ -77,10 +83,11 @@ if (result) {
 } else {
     console.log(failMsgs[Math.floor(Math.random() * failMsgs.length)]);
 
-    console.log(`${BOLD}Commit message:${EOS} ${RED}${msg}${EOS}`);
+    console.log(`${BOLD}Commit message:${EOS} ${RED}${msg}${EOS}\n`);
+    console.log(`${BOLD}Prefixes:${EOS}\n${prefixesInfo}\n`);
     console.log(`${BOLD}Example of correct message:${EOS}`);
-    exampleMsg.forEach((example, i) => {
-        console.log(`  ${i + 1}) ${BLUE}${example}${EOS}`);
+    exampleMsg.forEach((example) => {
+        console.log(`\t${BLUE}${example}${EOS}`);
     });
     console.log();
     process.exit(1);
