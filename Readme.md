@@ -17,4 +17,5 @@ chmod +x ./.git-hooks/commit-msg
 -   [R] - refactor
 -   [CUSTOM] - something unknown but so much wanted
 
-
+### Stack
+-   go-playground/validator (json validation)

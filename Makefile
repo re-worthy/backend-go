@@ -8,3 +8,5 @@ build:
 	@cat ${tempFile}
 	@rm ${tempFile}
 
+dev:
+	@go run cmd/api/main.go
