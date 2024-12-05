@@ -1,14 +1,14 @@
 package services
 
-import "net/http"
+import (
+	"net/http"
 
-type THelloWorld struct {
-	Hello string `json:"hello"`
-}
-type THelloWorldR struct {
-	Name string `json:"name" validate:"required" `
+	"github.com/re-worthy/backend-go/internal/handlers/dto"
+)
+
+func init() {
+  HelloWorldService.HelloWorldHandler = func (r *http.Request, w http.ResponseWriter, body *interface{}) (error, *dto.THelloWorld) {
+    return nil, &dto.THelloWorld{Hello: "world"}
+  }
 }
 
-func HelloWorldHandler(r *http.Request, w http.ResponseWriter, body THelloWorldR) (error, *THelloWorld) {
-	return nil, &THelloWorld{Hello: body.Name}
-}
