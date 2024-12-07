@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	handlers "github.com/re-worthy/backend-go/internal/handlers/types"
 	"github.com/re-worthy/backend-go/pkg/utils"
 )
 
-func Adapter[Rq any, Rs any](handlerFunc handlers.THandlerFunc[Rq, Rs]) http.HandlerFunc {
+func Adapter[Rq any, Rs any](handlerFunc THandlerFunc[Rq, Rs]) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
     var reqBodyData *Rq
     reqBodyData = nil

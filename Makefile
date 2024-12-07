@@ -10,3 +10,7 @@ build:
 
 dev:
 	@go run cmd/api/main.go
+
+
+test:
+	@go test ./pkg/... ./internal/... ./cmd/... $(FLAGS)
