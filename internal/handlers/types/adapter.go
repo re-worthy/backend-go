@@ -9,16 +9,16 @@ import (
 
 func Adapter[Rq any, Rs any](handlerFunc THandlerFunc[Rq, Rs]) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-    var reqBodyData *Rq
-    reqBodyData = nil
+		var reqBodyData *Rq
+		reqBodyData = nil
 
-    if r.Method != "GET" {
-      var errValidateBody error
-      reqBodyData, errValidateBody = utils.HttpValidateBodyJson[Rq](r, w)
-      if errValidateBody != nil {
-        return
-      }
-    }
+		if r.Method != "GET" {
+			var errValidateBody error
+			reqBodyData, errValidateBody = utils.HttpValidateBodyJson[Rq](r, w)
+			if errValidateBody != nil {
+				return
+			}
+		}
 
 		errHandleFunc, response := handlerFunc(r, w, reqBodyData)
 		if errHandleFunc != nil {

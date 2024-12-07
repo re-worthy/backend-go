@@ -12,10 +12,10 @@ import (
 )
 
 func TestValidHelloWhoHandler(t *testing.T) {
-  const (
-    expectedName = "123"
-    jsonBody     = `{"name":"` + expectedName + `"}`
-  )
+	const (
+		expectedName = "123"
+		jsonBody     = `{"name":"` + expectedName + `"}`
+	)
 
 	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler))
 	defer ts.Close()
@@ -35,16 +35,16 @@ func TestValidHelloWhoHandler(t *testing.T) {
 		t.Fatal(err)
 	}
 
-  if parsed.Hello != expectedName {
-    t.Fatalf("Invalid gretting subject, got %s, but expected %s", parsed.Hello, expectedName)
-  }
+	if parsed.Hello != expectedName {
+		t.Fatalf("Invalid gretting subject, got %s, but expected %s", parsed.Hello, expectedName)
+	}
 }
 
 func TestBrokenJSONHelloWhoHandler(t *testing.T) {
-  const (
-    expectedName = "123"
-    brokenJsonBody     = `{name":"` + expectedName + `"}`
-  )
+	const (
+		expectedName   = "123"
+		brokenJsonBody = `{name":"` + expectedName + `"}`
+	)
 
 	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler))
 	defer ts.Close()
@@ -66,10 +66,10 @@ func TestBrokenJSONHelloWhoHandler(t *testing.T) {
 }
 
 func TestInvalidJSONHelloWhoHandler(t *testing.T) {
-  const (
-    expectedName = "123"
-    brokenJsonBody     = `{"notname":"` + expectedName + `"}`
-  )
+	const (
+		expectedName   = "123"
+		brokenJsonBody = `{"notname":"` + expectedName + `"}`
+	)
 
 	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler))
 	defer ts.Close()
@@ -91,10 +91,10 @@ func TestInvalidJSONHelloWhoHandler(t *testing.T) {
 }
 
 func TestInvalidJSONNumberHelloWhoHandler(t *testing.T) {
-  const (
-    expectedName = "123"
-    brokenJsonBody     = `{"name":` + expectedName + `}`
-  )
+	const (
+		expectedName   = "123"
+		brokenJsonBody = `{"name":` + expectedName + `}`
+	)
 
 	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler))
 	defer ts.Close()
@@ -114,4 +114,3 @@ func TestInvalidJSONNumberHelloWhoHandler(t *testing.T) {
 		t.Fatalf("Expected to receive JSON parsing error, but got <nil>. Parsed = %v", parsed)
 	}
 }
-

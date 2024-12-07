@@ -7,4 +7,3 @@ type THelloWorld struct {
 type THelloWorldRq struct {
 	Name string `json:"name" validate:"required" `
 }
-
