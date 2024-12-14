@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,9 +10,11 @@ import (
 	"github.com/re-worthy/backend-go/pkg/utils"
 )
 
+var envConfig env_init.TEnvConfig
+
 func init() {
 	env_init.LoadEnv()
-	env_init.ValidateEnv()
+	envConfig = env_init.ValidateEnv()
 }
 
 func main() {
@@ -19,7 +22,8 @@ func main() {
 	baseHandler := handlers.NewBaseHandler()
 	handlers.SetupRoutes(mux, baseHandler)
 
-	log.Println("Server starting on 0.0.0.0:8080...")
-	errServer := http.ListenAndServe("0.0.0.0:8080", mux)
+	address := fmt.Sprintf("%s:%d", envConfig.SELF_HOST, envConfig.SELF_PORT)
+	log.Printf("Server starting on %s ...", address)
+	errServer := http.ListenAndServe(address, mux)
 	utils.PanicOnError(&errServer)
 }
