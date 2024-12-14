@@ -19,6 +19,7 @@ chmod +x ./.git-hooks/commit-msg
 
 ## Stack
 -   go-playground/validator (json validation)
+-   github.com/caarlos0/env (env variables validation)
 
 ## Project Structure (potential)
 ```
