@@ -18,11 +18,11 @@ func TestValidHelloWhoHandler(t *testing.T) {
 		jsonBody     = `{"name":"` + expectedName + `"}`
 	)
 
-  baseHandler, onclose, err := tests.NewTestBaseHandler();
-  if err != nil {
+	baseHandler, onclose, err := tests.NewTestBaseHandler()
+	if err != nil {
 		t.Fatal(err)
 	}
-  defer onclose();
+	defer onclose()
 
 	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler, baseHandler))
 	defer ts.Close()
@@ -53,11 +53,11 @@ func TestBrokenJSONHelloWhoHandler(t *testing.T) {
 		brokenJsonBody = `{name":"` + expectedName + `"}`
 	)
 
-  baseHandler, onclose, err := tests.NewTestBaseHandler();
-  if err != nil {
+	baseHandler, onclose, err := tests.NewTestBaseHandler()
+	if err != nil {
 		t.Fatal(err)
 	}
-  defer onclose();
+	defer onclose()
 
 	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler, baseHandler))
 	defer ts.Close()
@@ -84,11 +84,11 @@ func TestInvalidJSONHelloWhoHandler(t *testing.T) {
 		brokenJsonBody = `{"notname":"` + expectedName + `"}`
 	)
 
-  baseHandler, onclose, err := tests.NewTestBaseHandler();
-  if err != nil {
+	baseHandler, onclose, err := tests.NewTestBaseHandler()
+	if err != nil {
 		t.Fatal(err)
 	}
-  defer onclose();
+	defer onclose()
 
 	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler, baseHandler))
 	defer ts.Close()
@@ -115,11 +115,11 @@ func TestInvalidJSONNumberHelloWhoHandler(t *testing.T) {
 		brokenJsonBody = `{"name":` + expectedName + `}`
 	)
 
-  baseHandler, onclose, err := tests.NewTestBaseHandler();
-  if err != nil {
+	baseHandler, onclose, err := tests.NewTestBaseHandler()
+	if err != nil {
 		t.Fatal(err)
 	}
-  defer onclose();
+	defer onclose()
 
 	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler, baseHandler))
 	defer ts.Close()

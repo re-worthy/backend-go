@@ -16,11 +16,11 @@ func TestHelloWorldHandler(t *testing.T) {
 		expectedName = "world"
 	)
 
-  baseHandler, onclose, err := tests.NewTestBaseHandler();
-  if err != nil {
+	baseHandler, onclose, err := tests.NewTestBaseHandler()
+	if err != nil {
 		t.Fatal(err)
 	}
-  defer onclose();
+	defer onclose()
 
 	ts := httptest.NewServer(handlers.Adapter(HelloWorldHandler, baseHandler))
 	defer ts.Close()

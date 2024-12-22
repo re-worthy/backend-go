@@ -9,15 +9,14 @@ import (
 )
 
 func NewTestBaseHandler() (*handlers.TBaseHandler, dbshared.TOnClose, error) {
-  	dir, err := os.MkdirTemp("", "libsql-*")
+	dir, err := os.MkdirTemp("", "libsql-*")
 	if err != nil {
-		return nil, func() error {return nil }, err
+		return nil, func() error { return nil }, err
 	}
 	db, onclose, err := dblocal.GetLocalConnection("file:" + dir + "/test.db")
 	if err != nil {
-		return nil, func() error {return nil }, err
+		return nil, func() error { return nil }, err
 	}
 
 	return &handlers.TBaseHandler{DB: db}, onclose, nil
 }
-
