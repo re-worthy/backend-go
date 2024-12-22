@@ -1,4 +1,4 @@
-package db_remote 
+package db_remote
 
 import (
 	"database/sql"
