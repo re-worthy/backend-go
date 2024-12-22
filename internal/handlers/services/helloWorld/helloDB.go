@@ -14,7 +14,7 @@ type tHelloDBHandler = handlers.THandlerFunc[interface{}, dto.THelloDB]
 
 var HelloDBHandler tHelloDBHandler = func(r *http.Request, w http.ResponseWriter, body *interface{}, g *handlers.TBaseHandler) (error, *dto.THelloDB) {
 	var result dto.THelloDB
-	var cnt int32
+	var cnt int
 	ErrNotExists := errors.New("Counter not found")
 	ErrGeneralError := errors.New("Internal server error")
 

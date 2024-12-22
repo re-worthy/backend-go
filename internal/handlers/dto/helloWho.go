@@ -9,5 +9,5 @@ type THelloWorldRq struct {
 }
 
 type THelloDB struct {
-	Counter int32 `json:"counter"`
+	Counter int `json:"counter"`
 }

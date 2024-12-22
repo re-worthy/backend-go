@@ -1,4 +1,4 @@
-package dblocal
+package db_local
 
 import (
 	"database/sql"

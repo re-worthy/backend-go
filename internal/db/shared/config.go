@@ -1,4 +1,4 @@
-package shared_db
+package db_shared
 
 import (
 	"database/sql"
