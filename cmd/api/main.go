@@ -19,7 +19,12 @@ func init() {
 
 func main() {
 	mux := http.NewServeMux()
-	baseHandler := handlers.NewBaseHandler()
+	baseHandler, dbOnClose, err := handlers.NewBaseHandler(envConfig)
+	if err != nil {
+		log.Fatalf("Error creating new base handler:\n\t%s", err.Error())
+	}
+	defer dbOnClose()
+
 	handlers.SetupRoutes(mux, baseHandler)
 
 	address := fmt.Sprintf("%s:%d", envConfig.SELF_HOST, envConfig.SELF_PORT)
