@@ -7,7 +7,7 @@ import (
 	"github.com/re-worthy/backend-go/pkg/utils"
 )
 
-func Adapter[Rq any, Rs any](handlerFunc THandlerFunc[Rq, Rs]) http.HandlerFunc {
+func Adapter[Rq any, Rs any](handlerFunc THandlerFunc[Rq, Rs], generalHandler *TBaseHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var reqBodyData *Rq
 		reqBodyData = nil
@@ -16,16 +16,17 @@ func Adapter[Rq any, Rs any](handlerFunc THandlerFunc[Rq, Rs]) http.HandlerFunc 
 			var errValidateBody error
 			reqBodyData, errValidateBody = utils.HttpValidateBodyJson[Rq](r, w)
 			if errValidateBody != nil {
+				w.WriteHeader(http.StatusUnprocessableEntity)
 				return
 			}
 		}
 
-		errHandleFunc, response := handlerFunc(r, w, reqBodyData)
+		errHandleFunc, response := handlerFunc(r, w, reqBodyData, generalHandler)
 		if errHandleFunc != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errHandleFunc.Error()))
 			return
 		}
-
-		w.WriteHeader(http.StatusOK)
 
 		message, err := json.Marshal(response)
 		if err != nil {
@@ -33,6 +34,7 @@ func Adapter[Rq any, Rs any](handlerFunc THandlerFunc[Rq, Rs]) http.HandlerFunc 
 			w.Write([]byte(err.Error()))
 			return
 		}
+		w.WriteHeader(http.StatusOK)
 		w.Write(message)
 	}
 }
