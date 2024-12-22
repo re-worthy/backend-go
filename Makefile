@@ -32,5 +32,9 @@ env_init:
 test:
 	@go test ./pkg/... ./internal/... ./cmd/... $(FLAGS)
 
+init:
+	@make env_init;
+
 default:
 	dev;
+

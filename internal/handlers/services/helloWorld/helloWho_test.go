@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/re-worthy/backend-go/internal/handlers/dto"
+	"github.com/re-worthy/backend-go/internal/handlers/tests"
 	handlers "github.com/re-worthy/backend-go/internal/handlers/types"
 	"github.com/re-worthy/backend-go/pkg/utils"
 )
@@ -17,7 +18,13 @@ func TestValidHelloWhoHandler(t *testing.T) {
 		jsonBody     = `{"name":"` + expectedName + `"}`
 	)
 
-	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler))
+  baseHandler, onclose, err := tests.NewTestBaseHandler();
+  if err != nil {
+		t.Fatal(err)
+	}
+  defer onclose();
+
+	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler, baseHandler))
 	defer ts.Close()
 
 	resp, err := http.Post(ts.URL, "application/json", strings.NewReader(jsonBody))
@@ -46,7 +53,13 @@ func TestBrokenJSONHelloWhoHandler(t *testing.T) {
 		brokenJsonBody = `{name":"` + expectedName + `"}`
 	)
 
-	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler))
+  baseHandler, onclose, err := tests.NewTestBaseHandler();
+  if err != nil {
+		t.Fatal(err)
+	}
+  defer onclose();
+
+	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler, baseHandler))
 	defer ts.Close()
 
 	resp, err := http.Post(ts.URL, "application/json", strings.NewReader(brokenJsonBody))
@@ -71,7 +84,13 @@ func TestInvalidJSONHelloWhoHandler(t *testing.T) {
 		brokenJsonBody = `{"notname":"` + expectedName + `"}`
 	)
 
-	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler))
+  baseHandler, onclose, err := tests.NewTestBaseHandler();
+  if err != nil {
+		t.Fatal(err)
+	}
+  defer onclose();
+
+	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler, baseHandler))
 	defer ts.Close()
 
 	resp, err := http.Post(ts.URL, "application/json", strings.NewReader(brokenJsonBody))
@@ -96,7 +115,13 @@ func TestInvalidJSONNumberHelloWhoHandler(t *testing.T) {
 		brokenJsonBody = `{"name":` + expectedName + `}`
 	)
 
-	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler))
+  baseHandler, onclose, err := tests.NewTestBaseHandler();
+  if err != nil {
+		t.Fatal(err)
+	}
+  defer onclose();
+
+	ts := httptest.NewServer(handlers.Adapter(HelloWhoHandler, baseHandler))
 	defer ts.Close()
 
 	resp, err := http.Post(ts.URL, "application/json", strings.NewReader(brokenJsonBody))
