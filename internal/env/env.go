@@ -27,16 +27,16 @@ func ValidateEnv() TEnvConfig {
 	return cfg
 }
 
-func LoadEnv() {
-	const (
-		ENV_VAR_NAME        = "ENVIRONMENT"
-		ENV_NAME_PRODUCTION = "PRODUCTION"
-		ENV_NAME_DEV        = "DEVELOPMENT"
-		ENV_DEFAULT         = ENV_NAME_PRODUCTION
-		ENV_FILENAME_PROD   = ".env"
-		ENV_FILENAME_DEV    = ".env.dev"
-	)
+const (
+	ENV_VAR_NAME        = "ENVIRONMENT"
+	ENV_NAME_PRODUCTION = "PRODUCTION"
+	ENV_NAME_DEV        = "DEVELOPMENT"
+	ENV_DEFAULT         = ENV_NAME_PRODUCTION
+	ENV_FILENAME_PROD   = ".env"
+	ENV_FILENAME_DEV    = ".env.dev"
+)
 
+func LoadEnv() {
 	environment := os.Getenv(ENV_VAR_NAME)
 	if environment == "" {
 		log.Println("ENVIRONMENT variable not found, defaulting to \"production\"")

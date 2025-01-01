@@ -1,5 +1,5 @@
+args := $(wordlist 2, 100, $(MAKECMDGOALS))
 tempFile = ".temp"
-
 
 build:
 	@touch ${tempFile}
@@ -32,5 +32,20 @@ env_init:
 test:
 	@go test ./pkg/... ./internal/... ./cmd/... $(FLAGS)
 
+init:
+	@make env_init;
+
+sqlc:
+	@sqlc generate -f internal/db/sqlc/sqlc.yaml
+
+goose:
+	@GOOSE_DRIVER=turso GOOSE_DBSTRING=file:./.local.db goose -dir "./internal/db/migrations/" $(args) 
+
+check_db:
+	@! make goose status 2>&1 > /dev/null | grep -e "Pending *--"
+
 default:
 	dev;
+
+%::
+	@echo ""

@@ -1,0 +1,6 @@
+[] Create separate openapi schema and its versioning
+
+[] Create codegen for DTOs
+
+[] Add init validation based on openapi
+
