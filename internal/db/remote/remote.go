@@ -7,8 +7,10 @@ import (
 
 	db_shared "github.com/re-worthy/backend-go/internal/db/shared"
 
-	_ "github.com/tursodatabase/libsql-client-go/libsql"
+	_ "github.com/re-worthy/libsql-client-go/libsql"
 )
+
+const DRIVER_NAME = "libsql-old"
 
 var (
 	ErrDBPrefix      = errors.New("Expected database connection string to contain valid prefix")
@@ -36,7 +38,7 @@ func GetRemoteConnection(dataSourceName string) (*sql.DB, db_shared.TOnClose, er
 		return &sql.DB{}, func() error { return nil }, urlError
 	}
 
-	db, err := sql.Open(db_shared.DRIVER_NAME, dataSourceName)
+	db, err := sql.Open(DRIVER_NAME, dataSourceName)
 	if err != nil {
 		return &sql.DB{}, func() error { return nil }, err
 	}

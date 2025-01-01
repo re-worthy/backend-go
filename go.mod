@@ -13,6 +13,7 @@ require (
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/libsql/sqlite-antlr4-parser v0.0.0-20240327125255-dbf53b6cbf06 // indirect
+	github.com/re-worthy/libsql-client-go v0.0.0-20250101161553-e746c9384c6e // indirect
 	github.com/tursodatabase/go-libsql v0.0.0-20241113154718-293fe7f21b08 // indirect
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d // indirect
 	golang.org/x/crypto v0.31.0 // indirect

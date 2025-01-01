@@ -8,11 +8,13 @@ import (
 	_ "github.com/tursodatabase/go-libsql"
 )
 
+const DRIVER_NAME = "libsql"
+
 /*
 Dont forget to defer close database
 */
 func GetLocalConnection(dataSourceName string) (*sql.DB, db_shared.TOnClose, error) {
-	db, err := sql.Open(db_shared.DRIVER_NAME, dataSourceName)
+	db, err := sql.Open(DRIVER_NAME, dataSourceName)
 	if err != nil {
 		return &sql.DB{}, func() error { return nil }, err
 	}

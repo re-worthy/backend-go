@@ -5,10 +5,6 @@ import (
 	"log"
 )
 
-const (
-	DRIVER_NAME = "libsql"
-)
-
 type TOnClose = func() error
 
 func CreateOnCloseSuccess(db *sql.DB) TOnClose {
