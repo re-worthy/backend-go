@@ -25,9 +25,9 @@ func Adapter[Rq any, Rs any](handlerFunc THandlerFunc[Rq, Rs], generalHandler *T
 
 		response, errHandleFunc := handlerFunc(r, w, reqBodyData, generalHandler)
 		if errHandleFunc != nil {
-			log.Printf("Error evaling handlefunc:\n\t%s", errHandleFunc.Error())
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(errHandleFunc.Error()))
+			log.Printf("Error evaling handlefunc:\n\t%s", errHandleFunc.Err.Error())
+			w.WriteHeader(errHandleFunc.Status_code)
+			w.Write([]byte(errHandleFunc.User_err.Error()))
 			return
 		}
 
@@ -38,6 +38,7 @@ func Adapter[Rq any, Rs any](handlerFunc THandlerFunc[Rq, Rs], generalHandler *T
 			w.Write([]byte(errJson.Error()))
 			return
 		}
+
 		log.Printf("OK: route=%s", r.URL)
 		w.WriteHeader(http.StatusOK)
 		w.Write(message)

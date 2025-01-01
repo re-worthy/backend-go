@@ -3,7 +3,6 @@ package helloworld
 import (
 	"database/sql"
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/re-worthy/backend-go/internal/handlers/dto"
@@ -12,25 +11,35 @@ import (
 
 type tHelloDBHandler = handlers.THandlerFunc[interface{}, dto.THelloDB]
 
-var HelloDBHandler tHelloDBHandler = func(r *http.Request, w http.ResponseWriter, body *interface{}, g *handlers.TBaseHandler) (*dto.THelloDB, error) {
+var HelloDBHandler tHelloDBHandler = func(r *http.Request, w http.ResponseWriter, body *interface{}, g *handlers.TBaseHandler) (*dto.THelloDB, *handlers.ResponseError) {
 	var result dto.THelloDB
 	var cnt int
-	ErrNotExists := errors.New("Counter not found")
-	ErrGeneralError := errors.New("Internal server error")
 
 	_, errUpd := g.DB.Exec("UPDATE counter SET cnt=cnt+1 WHERE id=1")
 	if errUpd != nil {
-		return nil, errUpd
+		// TODO add check for sql erorrs
+		return nil, &handlers.ResponseError{
+			Err:         errUpd,
+			User_err:    errors.New("Cant update counter"),
+			Status_code: http.StatusBadRequest,
+		}
 	}
 
 	row := g.DB.QueryRow("SELECT cnt FROM counter WHERE id=1")
 	errScan := row.Scan(&cnt)
 	if errors.Is(errScan, sql.ErrNoRows) {
-		return nil, ErrNotExists
+		return nil, &handlers.ResponseError{
+			Err:         errScan,
+			User_err:    errors.New("Counter does not exists"),
+			Status_code: http.StatusBadRequest,
+		}
 	}
 	if errScan != nil {
-		log.Println(errScan.Error())
-		return nil, ErrGeneralError
+		return nil, &handlers.ResponseError{
+			Err:         errScan,
+			User_err:    errors.New("Cant get counter with id=1"),
+			Status_code: http.StatusInternalServerError,
+		}
 	}
 
 	result.Counter = cnt

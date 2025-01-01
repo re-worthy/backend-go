@@ -1,6 +1,7 @@
 package users
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -10,16 +11,24 @@ import (
 
 type tGetOneHandler = handlers.THandlerFunc[interface{}, dto.TGetUserRs]
 
-var GetOneHandler tGetOneHandler = func(r *http.Request, w http.ResponseWriter, body *interface{}, g *handlers.TBaseHandler) (*dto.TGetUserRs, error) {
+var GetOneHandler tGetOneHandler = func(r *http.Request, w http.ResponseWriter, body *interface{}, g *handlers.TBaseHandler) (*dto.TGetUserRs, *handlers.ResponseError) {
 	id_string := r.PathValue("user_id")
 	id, convertErr := strconv.Atoi(id_string)
 	if convertErr != nil {
-		return nil, convertErr
+		return nil, &handlers.ResponseError{
+			Err:         convertErr,
+			User_err:    errors.New("Invalid user_id path param. Pass integer"),
+			Status_code: http.StatusBadRequest,
+		}
 	}
 
 	user, getUserErr := g.Queries.GetUser(r.Context(), int64(id))
 	if getUserErr != nil {
-		return nil, getUserErr
+		return nil, &handlers.ResponseError{
+			Err:         getUserErr,
+			User_err:    errors.New("User does not exist"),
+			Status_code: http.StatusBadRequest,
+		}
 	}
 
 	return &dto.TGetUserRs{

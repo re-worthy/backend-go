@@ -1,6 +1,7 @@
 package users
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"net/url"
@@ -12,7 +13,7 @@ import (
 
 type tCreateOneHandler = handlers.THandlerFunc[dto.TCreateUserRq, dto.TGetUserRs]
 
-var CreateHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWriter, body *dto.TCreateUserRq, g *handlers.TBaseHandler) (*dto.TGetUserRs, error) {
+var CreateHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWriter, body *dto.TCreateUserRq, g *handlers.TBaseHandler) (*dto.TGetUserRs, *handlers.ResponseError) {
 	result_image := body.Image
 	log.Printf("result_image: %s", result_image)
 	if result_image == "" {
@@ -30,7 +31,11 @@ var CreateHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWrite
 	})
 
 	if createUserErr != nil {
-		return nil, createUserErr
+		return nil, &handlers.ResponseError{
+			Err:         createUserErr,
+			User_err:    errors.New("Cant create user"),
+			Status_code: http.StatusBadRequest,
+		}
 	}
 
 	return &dto.TGetUserRs{
