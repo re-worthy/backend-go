@@ -1,5 +1,5 @@
+args := $(wordlist 2, 100, $(MAKECMDGOALS))
 tempFile = ".temp"
-
 
 build:
 	@touch ${tempFile}
@@ -38,6 +38,11 @@ init:
 sqlc:
 	@sqlc generate -f internal/db/sqlc/sqlc.yaml
 
+goose:
+	@GOOSE_DRIVER=turso GOOSE_DBSTRING=file:./.local.db goose -dir "./internal/db/migrations/" $(args) 
+
 default:
 	dev;
 
+%::
+	@echo ""

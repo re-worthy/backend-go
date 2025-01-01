@@ -11,15 +11,15 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-  username,
-  'image',
-  'password'
+    username,
+    image,
+    password
 ) VALUES (
-  ?,
-  ?,
-  ?
+    ?,
+    ?,
+    ?
 )
-RETURNING primary_currency, username, 'password', 'image', id, balance
+RETURNING primary_currency, username, password, image, id, balance
 `
 
 type CreateUserParams struct {
@@ -43,7 +43,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getUser = `-- name: GetUser :one
-SELECT primary_currency, username, 'password', 'image', id, balance FROM users where users.id = ?
+SELECT primary_currency, username, password, image, id, balance FROM users where users.id = ?
 `
 
 func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {

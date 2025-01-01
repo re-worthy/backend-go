@@ -1,6 +1,7 @@
 package users
 
 import (
+	"log"
 	"net/http"
 	"net/url"
 
@@ -13,9 +14,11 @@ type tCreateOneHandler = handlers.THandlerFunc[dto.TCreateUserRq, dto.TGetUserRs
 
 var CreateHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWriter, body *dto.TCreateUserRq, g *handlers.TBaseHandler) (error, *dto.TGetUserRs) {
 	result_image := body.Image
+	log.Printf("result_image: %s", result_image)
 	if result_image == "" {
 		result_image = "https://api.dicebear.com/7.x/identicon/svg?seed=" + url.QueryEscape(body.Username)
 	}
+	log.Printf("result_image: %s", result_image)
 
 	// TODO add password hash
 	result_password := body.Password

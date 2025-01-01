@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/re-worthy/backend-go/pkg/utils"
@@ -16,6 +17,7 @@ func Adapter[Rq any, Rs any](handlerFunc THandlerFunc[Rq, Rs], generalHandler *T
 			var errValidateBody error
 			reqBodyData, errValidateBody = utils.HttpValidateBodyJson[Rq](r, w)
 			if errValidateBody != nil {
+				log.Printf("Error validating json body:\n\t%s", errValidateBody.Error())
 				w.WriteHeader(http.StatusUnprocessableEntity)
 				return
 			}
@@ -23,17 +25,20 @@ func Adapter[Rq any, Rs any](handlerFunc THandlerFunc[Rq, Rs], generalHandler *T
 
 		errHandleFunc, response := handlerFunc(r, w, reqBodyData, generalHandler)
 		if errHandleFunc != nil {
+			log.Printf("Error evaling handlefunc:\n\t%s", errHandleFunc.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(errHandleFunc.Error()))
 			return
 		}
 
-		message, err := json.Marshal(response)
-		if err != nil {
+		message, errJson := json.Marshal(response)
+		if errJson != nil {
+			log.Printf("Error marshaling json body:\n\t%s", errJson.Error())
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			w.Write([]byte(errJson.Error()))
 			return
 		}
+		log.Printf("OK: route=%s", r.URL)
 		w.WriteHeader(http.StatusOK)
 		w.Write(message)
 	}

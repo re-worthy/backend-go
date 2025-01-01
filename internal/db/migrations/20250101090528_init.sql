@@ -1,8 +1,10 @@
+-- +goose Up
+-- +goose StatementBegin
 CREATE TABLE users (
     primary_currency TEXT NOT NULL DEFAULT 'BYN',
     username TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,
-    image TEXT NOT NULL,
+    'password' TEXT NOT NULL,
+    'image' TEXT NOT NULL,
     id INTEGER PRIMARY KEY NOT NULL,
     balance INTEGER NOT NULL DEFAULT 0
 );
@@ -23,3 +25,11 @@ CREATE TABLE tags (
     id INTEGER PRIMARY KEY NOT NULL,
     transaction_id INTEGER NOT NULL REFERENCES transactions(id) ON DELETE CASCADE
 );
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS users;
+-- +goose StatementEnd
