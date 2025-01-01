@@ -20,6 +20,9 @@ chmod +x ./.git-hooks/commit-msg
 ## Stack
 -   go-playground/validator (json validation)
 -   github.com/caarlos0/env (env variables validation)
+-   https://sqlc.dev (sql compiler (sql typechecker -> golang funcs))
+-   [Future] golang.org/x/crypto/argon2 (password hashing)
+-   [Future] https://github.com/pressly/goose (db migrations)
 
 ## Project Structure (potential)
 ```

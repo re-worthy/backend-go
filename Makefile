@@ -35,6 +35,9 @@ test:
 init:
 	@make env_init;
 
+sqlc:
+	@sqlc generate -f internal/db/sqlc/sqlc.yaml
+
 default:
 	dev;
 
