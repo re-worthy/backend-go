@@ -12,7 +12,7 @@ import (
 
 type tCreateOneHandler = handlers.THandlerFunc[dto.TCreateUserRq, dto.TGetUserRs]
 
-var CreateHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWriter, body *dto.TCreateUserRq, g *handlers.TBaseHandler) (error, *dto.TGetUserRs) {
+var CreateHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWriter, body *dto.TCreateUserRq, g *handlers.TBaseHandler) (*dto.TGetUserRs, error) {
 	result_image := body.Image
 	log.Printf("result_image: %s", result_image)
 	if result_image == "" {
@@ -30,13 +30,13 @@ var CreateHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWrite
 	})
 
 	if createUserErr != nil {
-		return createUserErr, nil
+		return nil, createUserErr
 	}
 
-	return nil, &dto.TGetUserRs{
+	return &dto.TGetUserRs{
 		Username: user.Username,
 		Balance:  user.Balance,
 		Id:       user.ID,
 		Image:    user.Image,
-	}
+	}, nil
 }

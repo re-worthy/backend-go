@@ -12,7 +12,7 @@ import (
 
 type tHelloDBHandler = handlers.THandlerFunc[interface{}, dto.THelloDB]
 
-var HelloDBHandler tHelloDBHandler = func(r *http.Request, w http.ResponseWriter, body *interface{}, g *handlers.TBaseHandler) (error, *dto.THelloDB) {
+var HelloDBHandler tHelloDBHandler = func(r *http.Request, w http.ResponseWriter, body *interface{}, g *handlers.TBaseHandler) (*dto.THelloDB, error) {
 	var result dto.THelloDB
 	var cnt int
 	ErrNotExists := errors.New("Counter not found")
@@ -20,20 +20,20 @@ var HelloDBHandler tHelloDBHandler = func(r *http.Request, w http.ResponseWriter
 
 	_, errUpd := g.DB.Exec("UPDATE counter SET cnt=cnt+1 WHERE id=1")
 	if errUpd != nil {
-		return errUpd, nil
+		return nil, errUpd
 	}
 
 	row := g.DB.QueryRow("SELECT cnt FROM counter WHERE id=1")
 	errScan := row.Scan(&cnt)
 	if errors.Is(errScan, sql.ErrNoRows) {
-		return ErrNotExists, nil
+		return nil, ErrNotExists
 	}
 	if errScan != nil {
 		log.Println(errScan.Error())
-		return ErrGeneralError, nil
+		return nil, ErrGeneralError
 	}
 
 	result.Counter = cnt
 
-	return nil, &result
+	return &result, nil
 }

@@ -23,7 +23,7 @@ func Adapter[Rq any, Rs any](handlerFunc THandlerFunc[Rq, Rs], generalHandler *T
 			}
 		}
 
-		errHandleFunc, response := handlerFunc(r, w, reqBodyData, generalHandler)
+		response, errHandleFunc := handlerFunc(r, w, reqBodyData, generalHandler)
 		if errHandleFunc != nil {
 			log.Printf("Error evaling handlefunc:\n\t%s", errHandleFunc.Error())
 			w.WriteHeader(http.StatusInternalServerError)

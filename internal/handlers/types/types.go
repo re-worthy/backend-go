@@ -8,7 +8,7 @@ import (
 )
 
 type (
-	THandlerFunc[Rq any, Rs any] func(r *http.Request, w http.ResponseWriter, reqBodySchema *Rq, generalHandler *TBaseHandler) (error, *Rs)
+	THandlerFunc[Rq any, Rs any] func(r *http.Request, w http.ResponseWriter, reqBodySchema *Rq, generalHandler *TBaseHandler) (*Rs, error)
 	TBaseHandler                 struct {
 		DB      *sql.DB
 		Queries *gen.Queries
