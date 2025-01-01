@@ -41,6 +41,9 @@ sqlc:
 goose:
 	@GOOSE_DRIVER=turso GOOSE_DBSTRING=file:./.local.db goose -dir "./internal/db/migrations/" $(args) 
 
+check_db:
+	@! make goose status 2>&1 > /dev/null | grep -e "Pending *--"
+
 default:
 	dev;
 
