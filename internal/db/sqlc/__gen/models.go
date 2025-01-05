@@ -7,6 +7,7 @@ package gen
 type Tag struct {
 	Text          string
 	ID            int64
+	UserID        int64
 	TransactionID int64
 }
 
@@ -17,7 +18,7 @@ type Transaction struct {
 	OwnerID     int64
 	Amount      int64
 	IsIncome    int64
-	Createdat   int64
+	CreatedAt   int64
 }
 
 type User struct {
