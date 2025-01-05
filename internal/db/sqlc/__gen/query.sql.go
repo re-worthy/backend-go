@@ -7,7 +7,157 @@ package gen
 
 import (
 	"context"
+	"database/sql"
+	"strings"
 )
+
+const createTag = `-- name: CreateTag :one
+INSERT INTO tags (
+  text,
+  user_id,
+  transaction_id
+) VALUES (
+  ?,?,?
+)
+RETURNING text, id, user_id, transaction_id
+`
+
+type CreateTagParams struct {
+	Text          string
+	UserID        int64
+	TransactionID int64
+}
+
+func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (Tag, error) {
+	row := q.db.QueryRowContext(ctx, createTag, arg.Text, arg.UserID, arg.TransactionID)
+	var i Tag
+	err := row.Scan(
+		&i.Text,
+		&i.ID,
+		&i.UserID,
+		&i.TransactionID,
+	)
+	return i, err
+}
+
+const createTagsBatch = `-- name: CreateTagsBatch :many
+INSERT INTO tags (
+  text,
+  user_id,
+  transaction_id
+) VALUES (
+  UNNEST(/*SLICE:texts*/?),
+  UNNEST(/*SLICE:user_ids*/?),
+  UNNEST(/*SLICE:transaction_ids*/?)
+)
+RETURNING text, id, user_id, transaction_id
+`
+
+type CreateTagsBatchParams struct {
+	Texts          []interface{}
+	UserIds        []interface{}
+	TransactionIds []interface{}
+}
+
+func (q *Queries) CreateTagsBatch(ctx context.Context, arg CreateTagsBatchParams) ([]Tag, error) {
+	query := createTagsBatch
+	var queryParams []interface{}
+	if len(arg.Texts) > 0 {
+		for _, v := range arg.Texts {
+			queryParams = append(queryParams, v)
+		}
+		query = strings.Replace(query, "/*SLICE:texts*/?", strings.Repeat(",?", len(arg.Texts))[1:], 1)
+	} else {
+		query = strings.Replace(query, "/*SLICE:texts*/?", "NULL", 1)
+	}
+	if len(arg.UserIds) > 0 {
+		for _, v := range arg.UserIds {
+			queryParams = append(queryParams, v)
+		}
+		query = strings.Replace(query, "/*SLICE:user_ids*/?", strings.Repeat(",?", len(arg.UserIds))[1:], 1)
+	} else {
+		query = strings.Replace(query, "/*SLICE:user_ids*/?", "NULL", 1)
+	}
+	if len(arg.TransactionIds) > 0 {
+		for _, v := range arg.TransactionIds {
+			queryParams = append(queryParams, v)
+		}
+		query = strings.Replace(query, "/*SLICE:transaction_ids*/?", strings.Repeat(",?", len(arg.TransactionIds))[1:], 1)
+	} else {
+		query = strings.Replace(query, "/*SLICE:transaction_ids*/?", "NULL", 1)
+	}
+	rows, err := q.db.QueryContext(ctx, query, queryParams...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Tag
+	for rows.Next() {
+		var i Tag
+		if err := rows.Scan(
+			&i.Text,
+			&i.ID,
+			&i.UserID,
+			&i.TransactionID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const createTransaction = `-- name: CreateTransaction :one
+INSERT INTO transactions (
+    description,
+    currency,
+    owner_id,
+    amount,
+    is_income
+) VALUES (
+    ?,
+    ?,
+    ?,
+    ?,
+    ?
+)
+RETURNING description, currency, id, owner_id, amount, is_income, created_at
+`
+
+type CreateTransactionParams struct {
+	Description string
+	Currency    string
+	OwnerID     int64
+	Amount      int64
+	IsIncome    int64
+}
+
+func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionParams) (Transaction, error) {
+	row := q.db.QueryRowContext(ctx, createTransaction,
+		arg.Description,
+		arg.Currency,
+		arg.OwnerID,
+		arg.Amount,
+		arg.IsIncome,
+	)
+	var i Transaction
+	err := row.Scan(
+		&i.Description,
+		&i.Currency,
+		&i.ID,
+		&i.OwnerID,
+		&i.Amount,
+		&i.IsIncome,
+		&i.CreatedAt,
+	)
+	return i, err
+}
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
@@ -42,12 +192,175 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
-const getUser = `-- name: GetUser :one
-SELECT primary_currency, username, password, image, id, balance FROM users where users.id = ?
+const getRecentTransactionsByUserId = `-- name: GetRecentTransactionsByUserId :many
+SELECT description, currency, id, owner_id, amount, is_income, created_at FROM transactions WHERE owner_id = ? LIMIT ?
 `
 
-func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUser, id)
+type GetRecentTransactionsByUserIdParams struct {
+	OwnerID int64
+	Limit   int64
+}
+
+func (q *Queries) GetRecentTransactionsByUserId(ctx context.Context, arg GetRecentTransactionsByUserIdParams) ([]Transaction, error) {
+	rows, err := q.db.QueryContext(ctx, getRecentTransactionsByUserId, arg.OwnerID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Transaction
+	for rows.Next() {
+		var i Transaction
+		if err := rows.Scan(
+			&i.Description,
+			&i.Currency,
+			&i.ID,
+			&i.OwnerID,
+			&i.Amount,
+			&i.IsIncome,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getTransactionsByAndTags = `-- name: GetTransactionsByAndTags :many
+SELECT t1.description, t1.currency, t1.id, t1.owner_id, t1.amount, t1.is_income, t1.created_at, tg.texT
+FROM transactions t1
+  LEFT JOIN tags tg ON tg.transaction_id = t1.id
+WHERE
+  t1.owner_id = ?
+  AND
+  (? = 0 OR t1.id IN (
+    SELECT tags.transaction_id
+      FROM tags tags
+      WHERE
+        tags.user_id = ?
+        AND
+        tags.text IN (/*SLICE:comma_separated_tags*/?)
+  ))
+  AND
+  (? = 0 OR t1.created_at > ?)
+  AND
+  (? = 0 OR t1.created_at < ?)
+  AND
+  (? = 0 OR t1.description LIKE ?)
+GROUP BY t1.id
+LIMIT ?
+OFFSET ?
+`
+
+type GetTransactionsByAndTagsParams struct {
+	UserID             int64
+	UseTags            interface{}
+	UserId2            int64
+	CommaSeparatedTags []string
+	UseMinCreatedAt    interface{}
+	MinCreatedAt       int64
+	UseMaxCreatedAt    interface{}
+	MaxCreatedAt       int64
+	UseDescriptionWk   interface{}
+	DescriptionWk      string
+	Limit              int64
+	Offset             int64
+}
+
+type GetTransactionsByAndTagsRow struct {
+	Description string
+	Currency    string
+	ID          int64
+	OwnerID     int64
+	Amount      int64
+	IsIncome    int64
+	CreatedAt   int64
+	Text        sql.NullString
+}
+
+func (q *Queries) GetTransactionsByAndTags(ctx context.Context, arg GetTransactionsByAndTagsParams) ([]GetTransactionsByAndTagsRow, error) {
+	query := getTransactionsByAndTags
+	var queryParams []interface{}
+	queryParams = append(queryParams, arg.UserID)
+	queryParams = append(queryParams, arg.UseTags)
+	queryParams = append(queryParams, arg.UserId2)
+	if len(arg.CommaSeparatedTags) > 0 {
+		for _, v := range arg.CommaSeparatedTags {
+			queryParams = append(queryParams, v)
+		}
+		query = strings.Replace(query, "/*SLICE:comma_separated_tags*/?", strings.Repeat(",?", len(arg.CommaSeparatedTags))[1:], 1)
+	} else {
+		query = strings.Replace(query, "/*SLICE:comma_separated_tags*/?", "NULL", 1)
+	}
+	queryParams = append(queryParams, arg.UseMinCreatedAt)
+	queryParams = append(queryParams, arg.MinCreatedAt)
+	queryParams = append(queryParams, arg.UseMaxCreatedAt)
+	queryParams = append(queryParams, arg.MaxCreatedAt)
+	queryParams = append(queryParams, arg.UseDescriptionWk)
+	queryParams = append(queryParams, arg.DescriptionWk)
+	queryParams = append(queryParams, arg.Limit)
+	queryParams = append(queryParams, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, query, queryParams...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetTransactionsByAndTagsRow
+	for rows.Next() {
+		var i GetTransactionsByAndTagsRow
+		if err := rows.Scan(
+			&i.Description,
+			&i.Currency,
+			&i.ID,
+			&i.OwnerID,
+			&i.Amount,
+			&i.IsIncome,
+			&i.CreatedAt,
+			&i.Text,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserById = `-- name: GetUserById :one
+SELECT primary_currency, username, password, image, id, balance FROM users WHERE id = ?
+`
+
+func (q *Queries) GetUserById(ctx context.Context, id int64) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserById, id)
+	var i User
+	err := row.Scan(
+		&i.PrimaryCurrency,
+		&i.Username,
+		&i.Password,
+		&i.Image,
+		&i.ID,
+		&i.Balance,
+	)
+	return i, err
+}
+
+const getUserByUsername = `-- name: GetUserByUsername :one
+SELECT primary_currency, username, password, image, id, balance FROM users WHERE username = ?
+`
+
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUsername, username)
 	var i User
 	err := row.Scan(
 		&i.PrimaryCurrency,

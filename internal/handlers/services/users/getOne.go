@@ -22,7 +22,7 @@ var GetOneHandler tGetOneHandler = func(r *http.Request, w http.ResponseWriter, 
 		}
 	}
 
-	user, getUserErr := g.Queries.GetUser(r.Context(), int64(id))
+	user, getUserErr := g.Queries.GetUserById(r.Context(), int64(id))
 	if getUserErr != nil {
 		return nil, &handlers.ResponseError{
 			Err:         getUserErr,

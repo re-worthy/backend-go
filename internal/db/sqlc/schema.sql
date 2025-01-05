@@ -14,12 +14,13 @@ CREATE TABLE transactions (
     owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     amount INTEGER NOT NULL,
     is_income INTEGER NOT NULL,
-    'createdAt' INTEGER NOT NULL DEFAULT (strftime('%s', 'now') * 1000)
+    created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now') * 1000)
     -- * 1000 for ms-based
 );
 
 CREATE TABLE tags (
-    'text' TEXT NOT NULL,
+    text TEXT NOT NULL,
     id INTEGER PRIMARY KEY NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     transaction_id INTEGER NOT NULL REFERENCES transactions(id) ON DELETE CASCADE
 );
