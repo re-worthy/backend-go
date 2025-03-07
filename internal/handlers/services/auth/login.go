@@ -21,8 +21,8 @@ var LoginHandler tLoginHandler = func(r *http.Request, w http.ResponseWriter, bo
 	)
 
 	user, getUserErr := g.Queries.GetUserByUsername(r.Context(), gen.GetUserByUsernameParams{
-    Username: body.Username,
-  })
+		Username: body.Username,
+	})
 	if getUserErr != nil {
 		return nil, &handlers.ResponseError{
 			Err:         getUserErr,
@@ -48,13 +48,13 @@ var LoginHandler tLoginHandler = func(r *http.Request, w http.ResponseWriter, bo
 	}
 
 	token, getTokenErr := GetToken(&gen.User{
-    Primary_currency: user.Primary_currency,
-    Username: user.Username,
-    Password: user.Password,
-    Image: user.Image,
-    Id: user.Id,
-    Balance: user.Balance,
-  })
+		Primary_currency: user.Primary_currency,
+		Username:         user.Username,
+		Password:         user.Password,
+		Image:            user.Image,
+		Id:               user.Id,
+		Balance:          user.Balance,
+	})
 	if getTokenErr != nil {
 		return nil, &handlers.ResponseError{
 			Err:         getTokenErr,

@@ -66,14 +66,14 @@ var GetPaginatedHandler tGetPaginatedHandler = func(r *http.Request, w http.Resp
 	*/
 
 	trs, getTrsErr := g.Queries.GetTransactionsByAndTags(r.Context(), gen.GetTransactionsByAndTagsParams{
-		User_id:             payload.ID,
-		Tags:            "",
-		User_id2:            payload.ID,
-		Min_created_at:    0,
-		Max_created_at:    0,
-		Description_wk:      "",
-		Limit:              limit,
-		Offset:             offset,
+		User_id:        payload.ID,
+		Tags:           "",
+		User_id2:       payload.ID,
+		Min_created_at: 0,
+		Max_created_at: 0,
+		Description_wk: "",
+		Limit:          limit,
+		Offset:         offset,
 	})
 	if getTrsErr != nil {
 		return nil, &handlers.ResponseError{

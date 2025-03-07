@@ -46,14 +46,14 @@ var RegisterHandler tRegisterHandler = func(r *http.Request, w http.ResponseWrit
 		}
 	}
 
-  token, getTokenErr := GetToken(&gen.User{
-    Primary_currency: user.Primary_currency,
-    Username: user.Username,
-    Password: user.Password,
-    Image: user.Image,
-    Id: user.Id,
-    Balance: user.Balance,
-  })
+	token, getTokenErr := GetToken(&gen.User{
+		Primary_currency: user.Primary_currency,
+		Username:         user.Username,
+		Password:         user.Password,
+		Image:            user.Image,
+		Id:               user.Id,
+		Balance:          user.Balance,
+	})
 
 	if getTokenErr != nil {
 		return nil, &handlers.ResponseError{

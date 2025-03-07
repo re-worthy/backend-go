@@ -36,7 +36,7 @@ var GetRecentHandler tGetRecentHandler = func(r *http.Request, w http.ResponseWr
 
 	trs, getTrsErr := g.Queries.GetRecentTransactionsByUserId(r.Context(), gen.GetRecentTransactionsByUserIdParams{
 		Owner_id: payload.ID,
-		Limit:   3,
+		Limit:    3,
 	})
 	if getTrsErr != nil {
 		return nil, &handlers.ResponseError{

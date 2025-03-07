@@ -26,9 +26,9 @@ var CreateOneHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWr
 	tr, createTrErr := g.Queries.CreateTransaction(r.Context(), gen.CreateTransactionParams{
 		Description: body.Description,
 		Currency:    "BYN",
-		Owner_id:     payload.ID,
+		Owner_id:    payload.ID,
 		Amount:      body.Amount,
-		Is_income:    body.IsIncome,
+		Is_income:   body.IsIncome,
 	})
 	if createTrErr != nil {
 		return nil, &handlers.ResponseError{
@@ -68,7 +68,7 @@ var CreateOneHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWr
 	tags := []gen.Tag{}
 	for _, v := range body.Tags {
 		tag, createTagErr := g.Queries.CreateTag(r.Context(), gen.CreateTagParams{
-			Text:          v,
+			Text:           v,
 			User_id:        payload.ID,
 			Transaction_id: tr.Id,
 		})

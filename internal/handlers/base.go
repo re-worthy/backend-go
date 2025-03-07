@@ -27,8 +27,8 @@ func NewBaseHandler(env env_init.TEnvConfig) (*handlers.TBaseHandler, dbshared.T
 	}
 
 	q := &gen.Queries{
-    DB: db,
-  }
+		DB: db,
+	}
 
 	return &handlers.TBaseHandler{DB: db, Queries: q}, onclose, nil
 }
