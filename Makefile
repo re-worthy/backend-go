@@ -35,8 +35,8 @@ test:
 init:
 	@make env_init;
 
-sqlc:
-	@sqlc generate -f internal/db/sqlc/sqlc.yaml
+sqlrc:
+	@~/prog/re:worthy/sqlrc/bin/dist.cjs --cfg ./internal/db/sqlrc/config.json
 
 goose:
 	@GOOSE_DRIVER=turso GOOSE_DBSTRING=file:./.local.db goose -dir "./internal/db/migrations/" $(args) 

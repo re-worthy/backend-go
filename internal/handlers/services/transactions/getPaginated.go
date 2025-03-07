@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	gen "github.com/re-worthy/backend-go/internal/db/sqlc/__gen"
+	gen "github.com/re-worthy/backend-go/internal/db/sqlrc/__gen"
 	"github.com/re-worthy/backend-go/internal/handlers/dto"
 	"github.com/re-worthy/backend-go/internal/handlers/services/shared"
 	handlers "github.com/re-worthy/backend-go/internal/handlers/types"
@@ -66,18 +66,14 @@ var GetPaginatedHandler tGetPaginatedHandler = func(r *http.Request, w http.Resp
 	*/
 
 	trs, getTrsErr := g.Queries.GetTransactionsByAndTags(r.Context(), gen.GetTransactionsByAndTagsParams{
-		UserID:             payload.ID,
-		UseTags:            0,
-		UserId2:            payload.ID,
-		CommaSeparatedTags: []string{},
-		UseMinCreatedAt:    0,
-		MinCreatedAt:       0,
-		UseMaxCreatedAt:    0,
-		MaxCreatedAt:       0,
-		UseDescriptionWk:   0,
-		DescriptionWk:      "",
-		Limit:              int64(limit),
-		Offset:             int64(offset),
+		User_id:             payload.ID,
+		Tags:            "",
+		User_id2:            payload.ID,
+		Min_created_at:    0,
+		Max_created_at:    0,
+		Description_wk:      "",
+		Limit:              limit,
+		Offset:             offset,
 	})
 	if getTrsErr != nil {
 		return nil, &handlers.ResponseError{
@@ -88,17 +84,17 @@ var GetPaginatedHandler tGetPaginatedHandler = func(r *http.Request, w http.Resp
 	}
 
 	resp := []dto.TTransactionWTagsRs{}
-	for _, tr := range trs {
+	for _, tr := range *trs {
 		fmt.Printf("%v", tr.Text)
 		resp = append(resp, dto.TTransactionWTagsRs{
 			TTransactionRs: dto.TTransactionRs{
 				Description: tr.Description,
 				Currency:    tr.Currency,
-				ID:          tr.ID,
-				OwnerID:     tr.OwnerID,
+				ID:          tr.Id,
+				OwnerID:     tr.Owner_id,
 				Amount:      tr.Amount,
-				IsIncome:    tr.IsIncome,
-				Createdat:   tr.CreatedAt,
+				IsIncome:    tr.Is_income,
+				Createdat:   tr.Created_at,
 			},
 			Tags: []string{},
 			// Tags: strings.Split(tr.GroupConcat, ","),

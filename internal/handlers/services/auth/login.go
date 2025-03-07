@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	gen "github.com/re-worthy/backend-go/internal/db/sqlrc/__gen"
 	"github.com/re-worthy/backend-go/internal/handlers/dto"
 	handlers "github.com/re-worthy/backend-go/internal/handlers/types"
 )
@@ -19,7 +20,9 @@ var LoginHandler tLoginHandler = func(r *http.Request, w http.ResponseWriter, bo
 		ERR_SERVER_INVALID_PSWD = errors.New("Password validation returned false")
 	)
 
-	user, getUserErr := g.Queries.GetUserByUsername(r.Context(), body.Username)
+	user, getUserErr := g.Queries.GetUserByUsername(r.Context(), gen.GetUserByUsernameParams{
+    Username: body.Username,
+  })
 	if getUserErr != nil {
 		return nil, &handlers.ResponseError{
 			Err:         getUserErr,
@@ -44,7 +47,14 @@ var LoginHandler tLoginHandler = func(r *http.Request, w http.ResponseWriter, bo
 		}
 	}
 
-	token, getTokenErr := GetToken(&user)
+	token, getTokenErr := GetToken(&gen.User{
+    Primary_currency: user.Primary_currency,
+    Username: user.Username,
+    Password: user.Password,
+    Image: user.Image,
+    Id: user.Id,
+    Balance: user.Balance,
+  })
 	if getTokenErr != nil {
 		return nil, &handlers.ResponseError{
 			Err:         getTokenErr,

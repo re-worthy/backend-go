@@ -8,7 +8,7 @@ import (
 )
 
 type TTokenPayload struct {
-	ID int64
+	ID int
 }
 
 var ERR_INVALID_TOKEN = errors.New("Invalid token")
@@ -19,11 +19,11 @@ func GetTokenPayload(token string) (*TTokenPayload, error) {
 		return nil, ERR_INVALID_TOKEN
 	}
 
-	i, convertErr := strconv.ParseInt(parts[1], 10, 64)
+	i, convertErr := strconv.ParseInt(parts[1], 10, 32)
 	if convertErr != nil {
 		return nil, convertErr
 	}
-	return &TTokenPayload{ID: i}, nil
+	return &TTokenPayload{ID: int(i)}, nil
 }
 
 func GetRequestAuth(r *http.Request) string {

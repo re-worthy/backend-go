@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	gen "github.com/re-worthy/backend-go/internal/db/sqlc/__gen"
+	gen "github.com/re-worthy/backend-go/internal/db/sqlrc/__gen"
 	"github.com/re-worthy/backend-go/internal/handlers/dto"
 	"github.com/re-worthy/backend-go/internal/handlers/services/shared"
 	handlers "github.com/re-worthy/backend-go/internal/handlers/types"
@@ -35,7 +35,7 @@ var GetRecentHandler tGetRecentHandler = func(r *http.Request, w http.ResponseWr
 	limit = min(limit, MAX_LIMIT)
 
 	trs, getTrsErr := g.Queries.GetRecentTransactionsByUserId(r.Context(), gen.GetRecentTransactionsByUserIdParams{
-		OwnerID: payload.ID,
+		Owner_id: payload.ID,
 		Limit:   3,
 	})
 	if getTrsErr != nil {
@@ -47,15 +47,15 @@ var GetRecentHandler tGetRecentHandler = func(r *http.Request, w http.ResponseWr
 	}
 
 	resp := []dto.TTransactionRs{}
-	for _, tr := range trs {
+	for _, tr := range *trs {
 		resp = append(resp, dto.TTransactionRs{
 			Description: tr.Description,
 			Currency:    tr.Currency,
-			ID:          tr.ID,
-			OwnerID:     tr.OwnerID,
+			ID:          tr.Id,
+			OwnerID:     tr.Owner_id,
 			Amount:      tr.Amount,
-			IsIncome:    tr.IsIncome,
-			Createdat:   tr.CreatedAt,
+			IsIncome:    tr.Is_income,
+			Createdat:   tr.Created_at,
 		})
 	}
 

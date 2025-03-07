@@ -3,7 +3,7 @@ package auth
 import (
 	"fmt"
 
-	gen "github.com/re-worthy/backend-go/internal/db/sqlc/__gen"
+	gen "github.com/re-worthy/backend-go/internal/db/sqlrc/__gen"
 )
 
 func HashPassword(password string) (string, error) {
@@ -20,5 +20,5 @@ func ValidatePassword(input string, hash string) (bool, error) {
 }
 
 func GetToken(user *gen.User) (string, error) {
-	return fmt.Sprintf("token_for_userid:%d", user.ID), nil
+	return fmt.Sprintf("token_for_userid:%d", user.Id), nil
 }

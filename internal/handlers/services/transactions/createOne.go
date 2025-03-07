@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	gen "github.com/re-worthy/backend-go/internal/db/sqlc/__gen"
+	gen "github.com/re-worthy/backend-go/internal/db/sqlrc/__gen"
 	"github.com/re-worthy/backend-go/internal/handlers/dto"
 	"github.com/re-worthy/backend-go/internal/handlers/services/shared"
 	handlers "github.com/re-worthy/backend-go/internal/handlers/types"
@@ -26,9 +26,9 @@ var CreateOneHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWr
 	tr, createTrErr := g.Queries.CreateTransaction(r.Context(), gen.CreateTransactionParams{
 		Description: body.Description,
 		Currency:    "BYN",
-		OwnerID:     payload.ID,
+		Owner_id:     payload.ID,
 		Amount:      body.Amount,
-		IsIncome:    body.IsIncome,
+		Is_income:    body.IsIncome,
 	})
 	if createTrErr != nil {
 		return nil, &handlers.ResponseError{
@@ -69,8 +69,8 @@ var CreateOneHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWr
 	for _, v := range body.Tags {
 		tag, createTagErr := g.Queries.CreateTag(r.Context(), gen.CreateTagParams{
 			Text:          v,
-			UserID:        payload.ID,
-			TransactionID: tr.ID,
+			User_id:        payload.ID,
+			Transaction_id: tr.Id,
 		})
 		if createTagErr != nil {
 			return nil, &handlers.ResponseError{
@@ -80,7 +80,12 @@ var CreateOneHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWr
 			}
 		}
 
-		tags = append(tags, tag)
+		tags = append(tags, gen.Tag{
+			Text:           tag.Text,
+			Id:             tag.Id,
+			User_id:        tag.User_id,
+			Transaction_id: tag.Transaction_id,
+		})
 	}
 
 	respTags := []string{}
@@ -91,11 +96,11 @@ var CreateOneHandler tCreateOneHandler = func(r *http.Request, w http.ResponseWr
 		TTransactionRs: dto.TTransactionRs{
 			Description: tr.Description,
 			Currency:    tr.Currency,
-			ID:          tr.ID,
-			OwnerID:     tr.OwnerID,
+			ID:          tr.Id,
+			OwnerID:     tr.Owner_id,
 			Amount:      tr.Amount,
-			IsIncome:    tr.IsIncome,
-			Createdat:   tr.CreatedAt,
+			IsIncome:    tr.Is_income,
+			Createdat:   tr.Created_at,
 		},
 		Tags: respTags,
 	}, nil

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
-	gen "github.com/re-worthy/backend-go/internal/db/sqlc/__gen"
+	gen "github.com/re-worthy/backend-go/internal/db/sqlrc/__gen"
 	"github.com/re-worthy/backend-go/internal/handlers/dto"
 	handlers "github.com/re-worthy/backend-go/internal/handlers/types"
 )
@@ -46,7 +46,15 @@ var RegisterHandler tRegisterHandler = func(r *http.Request, w http.ResponseWrit
 		}
 	}
 
-	token, getTokenErr := GetToken(&user)
+  token, getTokenErr := GetToken(&gen.User{
+    Primary_currency: user.Primary_currency,
+    Username: user.Username,
+    Password: user.Password,
+    Image: user.Image,
+    Id: user.Id,
+    Balance: user.Balance,
+  })
+
 	if getTokenErr != nil {
 		return nil, &handlers.ResponseError{
 			Err:         getTokenErr,
