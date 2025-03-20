@@ -6,7 +6,7 @@ import (
 	dblocal "github.com/re-worthy/backend-go/internal/db/local"
 	dbremote "github.com/re-worthy/backend-go/internal/db/remote"
 	dbshared "github.com/re-worthy/backend-go/internal/db/shared"
-	gen "github.com/re-worthy/backend-go/internal/db/sqlc/__gen"
+	gen "github.com/re-worthy/backend-go/internal/db/sqlrc/__gen"
 	env_init "github.com/re-worthy/backend-go/internal/env"
 	handlers "github.com/re-worthy/backend-go/internal/handlers/types"
 )
@@ -26,7 +26,9 @@ func NewBaseHandler(env env_init.TEnvConfig) (*handlers.TBaseHandler, dbshared.T
 		return nil, func() error { return nil }, err
 	}
 
-	q := gen.New(db)
+	q := &gen.Queries{
+		DB: db,
+	}
 
 	return &handlers.TBaseHandler{DB: db, Queries: q}, onclose, nil
 }

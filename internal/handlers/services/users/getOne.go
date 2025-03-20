@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	gen "github.com/re-worthy/backend-go/internal/db/sqlrc/__gen"
 	"github.com/re-worthy/backend-go/internal/handlers/dto"
 	handlers "github.com/re-worthy/backend-go/internal/handlers/types"
 )
@@ -22,7 +23,9 @@ var GetOneHandler tGetOneHandler = func(r *http.Request, w http.ResponseWriter, 
 		}
 	}
 
-	user, getUserErr := g.Queries.GetUser(r.Context(), int64(id))
+	user, getUserErr := g.Queries.GetUserById(r.Context(), gen.GetUserByIdParams{
+		Id: id,
+	})
 	if getUserErr != nil {
 		return nil, &handlers.ResponseError{
 			Err:         getUserErr,
@@ -34,7 +37,7 @@ var GetOneHandler tGetOneHandler = func(r *http.Request, w http.ResponseWriter, 
 	return &dto.TGetUserRs{
 		Username: user.Username,
 		Balance:  user.Balance,
-		Id:       user.ID,
+		Id:       user.Id,
 		Image:    user.Image,
 	}, nil
 }

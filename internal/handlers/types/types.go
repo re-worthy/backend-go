@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 
-	gen "github.com/re-worthy/backend-go/internal/db/sqlc/__gen"
+	gen "github.com/re-worthy/backend-go/internal/db/sqlrc/__gen"
 )
 
 type ResponseError struct {
